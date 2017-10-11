@@ -11,11 +11,19 @@ var fps = 2;
 var timeout = 1000/fps;
 
 var snake = {
-
+	
 }
 
-var apple = {
-
+class Apple{
+	constructor(x, y){
+		this.x = x;
+		this.y = y;
+		this.color = 'red';
+		this.size = 20;
+	} 
+	draw(){
+		
+	}
 }
 
 window.onload = function() {
@@ -25,7 +33,7 @@ window.onload = function() {
 }
 
 function draw(){
-	
+
 }
 
 function update(){

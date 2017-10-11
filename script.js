@@ -10,6 +10,8 @@ var bgColor2 = 'rgb(190, 190, 190)';
 var fps = 2;
 var timeout = 1000/fps;
 
+var apple;
+
 var snake = {
 
 	head:{
@@ -18,7 +20,7 @@ var snake = {
 	},
 
 	color: 'black',
-	direction: 1, // 1 is up, 2 is left, 3 is down, 4 is right
+	direction: 4, // 1 is up, 2 is left, 3 is down, 4 is right
 	length: 1,
 	hash: new Array(15),
 	queue:{
@@ -29,13 +31,31 @@ var snake = {
 	draw(){
 		for(var i = 0; i < this.queue.x.length; i++){
 			cnv.fillStyle = this.color;
-			cnv.fillRect(this.queue.x[i] * 30, this.queue.x[i] * 30, 30, 30);
+			cnv.fillRect(this.queue.x[i] * 30, this.queue.y[i] * 30, 30, 30);
 		}
 		cnv.fillStyle = 'white';
-		cnv.fillRect(this.head.x * 30 + 10, this.head.x * 30 + 10, 10, 10);
+		cnv.fillRect(this.head.x * 30 + 10, this.head.y * 30 + 10, 10, 10);
 	},
 
 	update(){
+		if(this.direction == 1)
+			this.head.y--;
+		else if(this.direction == 2)
+			this.head.x++;
+		else if(this.direction == 3)
+			this.head.y++;
+		else
+			this.head.x--;
+		
+		this.queue.x.push(this.head.x);
+		this.queue.y.push(this.head.y);
+		this.hash[this.head.x][this.head.y] = true;
+
+		if(this.head.x != apple.x || this.head.y != apple.y){
+			this.hash[this.queue.x[0]][this.queue.y[0]] = false;
+			this.queue.x.shift();
+			this.queue.y.shift();
+		}
 	}
 }
 
@@ -54,26 +74,31 @@ class Apple{
 	}
 }
 
+apple = new Apple(3, 6);
+
 window.onload = function() {
 	console.log("Working Fine");
-	init();
+	initSnake();
 	setInterval(gameLoop, timeout);
 }
 
 function draw(){
+	drawBackground();
 	snake.draw();
+	apple.draw();
 }
 
 function update(){
-
+	snake.update();
 }
 
 function gameLoop(){
 	draw();
 	update();
+	console.log('frame passed');
 }
 
-function init(){
+function drawBackground(){
 	for(var i = 0; i < 15; i++)
 		for(var j = 0; j < 15; j++){
 			if((i + j) % 2 == 0)
@@ -82,7 +107,9 @@ function init(){
 				cnv.fillStyle = bgColor2;
 			cnv.fillRect(i * 30, j * 30, (i + 1) * 30, (j + 1) * 30);
 		}
-	// Initializing the grid
+}
+
+function initSnake(){
 	for(var a = 0; a < 15; a++)
 		snake.hash[a] = new Array(15);
 	for(var a = 0; a < 15; a++){
